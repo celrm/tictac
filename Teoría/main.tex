@@ -1,0 +1,39 @@
+\documentclass{article}
+
+\input{packages.tex}
+
+\title{}
+\author{}
+\date{}
+
+\begin{document}
+	
+%	\maketitle
+%	
+%	\begin{abstract}\end{abstract}
+%	
+%	\tableofcontents
+	
+	\section{Versión 1}
+	La primera versión consiste en realizar una búsqueda en anchura estándar sobre el árbol de soluciones. Es decir, se recorre cada posible solución, pero recorriendo todas las posibilidades de longitud $n$ antes de pasar a las soluciones de longitud $n+1$. Así nos aseguramos de que pasamos por la solución óptima antes que cualquier otra.
+	
+	El código del que partimos es el siguiente:
+	
+	\lstinputlisting{v1.cpp}
+	
+	\subsection{Restricciones}
+	\begin{enumerate}
+		\item Está en C++.
+		\item A partir de 10 000 tarda demasiado.
+		\item No se tienen en cuenta el orden de los operandos.
+		\item Tiene más paréntesis de la cuenta.
+	\end{enumerate}
+
+	\subsection{A hacer}
+	\begin{enumerate}
+		\item Ver si ayuda optimizar factorizando.
+		\item Ver cuál sería la estructura óptima (x*y+-z).
+		\item Ver si la división toma partido o no.
+	\end{enumerate}
+
+\end{document}
