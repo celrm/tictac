@@ -17,16 +17,18 @@ const unordered_set<ll> s = {1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61
 // Para poder switchear e iterar sobre las operaciones
 // las convierto tanto en enumerado como en vector.
 // Cuidado, redundancia.
-enum ops {DIV,MUL,SUM,RES};
-const vector<ops> opsvec = {DIV,MUL,SUM,RES};
+enum ops {DIV,ADIV,MUL,SUM,RES,ARES};
+const vector<ops> opsvec = {DIV,ADIV,MUL,SUM,RES,ARES};
 
 // Del enum a caracter.
 char tochar(ops o) {
 	switch(o) {
 		case DIV	: return '/';
+		case ADIV	: return '/';
 		case MUL	: return '*';
 		case SUM	: return '+';
 		case RES	: return '-';
+		case ARES	: return '-';
 		default		: return '0';
 	}
 }
@@ -35,9 +37,11 @@ char tochar(ops o) {
 ll op(int u, int v, ops o) {
 	switch(o) {
 		case DIV	: return u/v;
+		case ADIV	: return v/u;
 		case MUL	: return u*v;
 		case SUM	: return u+v;
 		case RES	: return u-v;
+		case ARES	: return v-u;
 		default		: return 0;
 	}
 }
@@ -52,27 +56,38 @@ void bfs(ll n, mli &dist,mlc &ch,unordered_set<ll> &ss) {
 		dist[u].push_front(u);
 		q.push(u);
 	}
-	while (!q.empty()) {
-		ll u = q.front(); q.pop();
-		for (auto v : ss) { // Itero sobre los primos
-			for (auto o : opsvec) { // y sobre cada operacion.
-				if(o==DIV && (u%v!=0)) continue; // Para dividir debe dar resultado entero.
-				ll w = op(u,v,o);
-				if (!dist[w].empty()) { // Si aun no se ha pasado por w
-					dist[w] = dist[u]; // La nueva cadena es la anterior
-					dist[w].push_back(v); // mas el nuevo primo.
-					ch[w] = ch[u]; // La cadena de operaciones es la anterior
-					if ((o==DIV || o==MUL) && !ch[u].empty()) {
-						ch[w].push_front('('); // mas parentesis si son * o /
-						ch[w].push_back(')');
-					}
-					ch[w].push_back(tochar(o)); // mas la nueva operacion.
-					if(w==n) return; // Se comprueba si hemos llegado al resultado.
-					q.push(w); // Se guarda el nodo en la cola.
+while (!q.empty()) {
+	ll u = q.front(); q.pop();
+	if(u==n) return; // Se comprueba si hemos llegado al resultado.
+	for (auto v : ss) { // Itero sobre los primos
+	for (auto o : opsvec) { // y sobre cada operacion.
+		if(!(o==DIV && u%v!=0) && !(o==ADIV && (u==0 || v%u!=0))) { // Condiciones de la division.
+			ll w = op(u,v,o);
+			if (dist[w].empty()) { // Si aun no se ha pasado por w
+				dist[w] = dist[u]; // La nueva cadena es la anterior ... (*)
+				ch[w] = ch[u]; // La cadena de operaciones es la anterior
+				if ((o==DIV || o==MUL) && !ch[u].empty()) {
+					ch[w].push_front('('); // mas parentesis si son * o /
+					ch[w].push_back(')');
 				}
+				if ((o==ADIV || o==ARES)) { // Caso no conmutativo.
+					if(!ch[u].empty()) {
+						ch[w].push_back('(');
+						ch[w].push_front(')');
+					}
+					ch[w].push_front(tochar(o));
+					dist[w].push_front(v);
+				}
+				else {
+					ch[w].push_back(tochar(o)); // mas la nueva operacion.
+					dist[w].push_back(v); // (*) ... mas el nuevo primo.
+				}
+				q.push(w); // Se guarda el nodo en la cola.
 			}
 		}
 	}
+	}
+}
 }
 
 bool caso() {
