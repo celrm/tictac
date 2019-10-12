@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+
+"""
+Traduccion del algoritmo a Python (incompleta)
+
+debería funcionar correctamente pero hay un problema en algun lado que estoy buscando
+"""
+
+
 import collections
 
 s = set((1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97))
@@ -30,7 +38,6 @@ def bfs( n, dist, ch, ss):
         if u==n:
             return
         for v in ss:
-            print(dist)
             for o in ops:
                 w=op(u,v,o)
                 if w in dist.keys() and w!=None and w>0:
