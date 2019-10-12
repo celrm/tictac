@@ -1,63 +1,53 @@
 # -*- coding: utf-8 -*-
 
-
-"""
-Traduccion del algoritmo a Python (incompleta)
-
-debería funcionar correctamente pero hay un problema en algun lado que estoy buscando
-"""
-
-
 import collections
 
-s = set((1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97))
+s = set([1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97])
 ops={"*","+","-","/"}
+
 
 def op( u, v, o):
     if o=="*":
         return u*v
-    elif o=="+":
+    if o=="+":
         return u+v
-    elif o=="-":
+    if o=="-":
         return u-v
-    elif o=="/" and u%v==0:
-        return u/v
+    if o=="/" and u%v==0:
+        return int(u/v)
 
 
-dist={}
-ch={}
-
-def bfs( n, dist, ch, ss):
+def bfs( n, p):  
+    dist={}
+    ch={}
+    ss=s.copy()
+    ss.remove(p)
     q = collections.deque()
     for u in ss:
-        dist[u]=[u]; ch[u]=[u]
+        dist[u]=[u]; ch[u]=[]
         q.append(u)
     while len(q)!=0:
         u = q[0]
         q.popleft()
-        if u==n:
-            return
-        for v in ss:
+        for v in ss:          
             for o in ops:
                 w=op(u,v,o)
-                if w in dist.keys() and w!=None and w>0:
-                    aux= dist[u]
-                    aux.insert(0,v)
+                if w in dist.keys()and w!=None and w>0:
+                    aux= dist[u].copy()
+                    aux.append(v)
                     if len(aux)<len(dist[w]):
-                        dist[w] = aux
+                        dist.update({w:aux})
+                        ch[w] = ch[u].copy()
+                        ch[w].append(o)  
                 if w not in dist.keys() and w!=None and w>0:
-                    dist[w] = dist[u]
-                    dist[w].insert(0,v)
-                    ch[w] = ch[u]
-                    ch[w].insert(0,o)
+                    dist[w]= dist[u].copy()
+                    dist[w].append(v)
+                    ch[w] = ch[u].copy()
+                    ch[w].append(o)
                     q.append(w)
+                    if w==n:
+                        print(dist[w])
+                        print(ch[w])
+                        return w
 
-
-def funcion(n,p):
-    ss=s
-    ss.remove(p)
-    bfs(n, dist, ch, ss)
-
-
-
-
+    
