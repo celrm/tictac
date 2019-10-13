@@ -54,11 +54,11 @@ void bfs(ll n, mli &dist,mlc &ch,unordered_set<ll> &ss) {
 	queue<ll> q; // La cola para guardar los nodos de cada nivel.
 	for (auto u : ss) {// Todos los primos permitidos tienen como cadena ellos mismos.
 		dist[u].push_front(u);
+		if(u==n) return; // Se comprueba si hemos llegado al resultado.
 		q.push(u);
 	}
 while (!q.empty()) {
 	ll u = q.front(); q.pop();
-	if(u==n) return; // Se comprueba si hemos llegado al resultado.
 	for (auto v : ss) { // Itero sobre los primos
 	for (auto o : opsvec) { // y sobre cada operacion.
 		if(!(o==DIV && u%v!=0) && !(o==ADIV && (u==0 || v%u!=0))) { // Condiciones de la division.
@@ -72,8 +72,8 @@ while (!q.empty()) {
 				}
 				if ((o==ADIV || o==ARES)) { // Caso no conmutativo.
 					if(!ch[u].empty()) {
-						ch[w].push_back('(');
-						ch[w].push_front(')');
+						ch[w].push_front('(');
+						ch[w].push_back(')');
 					}
 					ch[w].push_front(tochar(o));
 					dist[w].push_front(v);
@@ -82,6 +82,7 @@ while (!q.empty()) {
 					ch[w].push_back(tochar(o)); // mas la nueva operacion.
 					dist[w].push_back(v); // (*) ... mas el nuevo primo.
 				}
+				if(w==n) return; // Se comprueba si hemos llegado al resultado.
 				q.push(w); // Se guarda el nodo en la cola.
 			}
 		}
