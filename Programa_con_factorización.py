@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import collections
-from itertools import chain
 
 s = set([1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97])
 primes=[1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
@@ -19,16 +18,18 @@ def op( u, v, o):
         return int(u/v)
 
 
-def factors(n):
-    result=[]
-    for i in chain([2],range(3,n+1,2)):
-        s=0
-        while n%i==0:
-            n/=i
-            s+=1
-            result.extend([i]*s)
-            if n==1:
-                return result
+def factors(n, startFrom=2):
+    if n <= 1:  return [ ]
+    d = startFrom
+    factors = [ ]
+    while n >= d*d:
+      if n % d == 0:
+        factors.append(d)
+        n = n/d
+      else:
+        d += 1 + d % 2
+    factors.append(n)
+    return factors
 
 
 def bfs( n, p):  
@@ -68,46 +69,18 @@ def bfs( n, p):
 def funcion(n,p):
     if n>500000:
         result=[]
-        cases=factors(n)
+        lista=factors(n)
         for prime in primes:
-            ocur=cases.count(prime)
+            ocur=lista.count(prime)
             if ocur>2:
-                lista=list(filter((prime).__ne__, cases))
+                lista=list(filter((prime).__ne__, lista))
                 lista.append(prime**ocur)
-                cases=lista
         for i in lista:
-            a=bfs(i,p)
+            a=funcion(i,p)
             result.append(a)
         return result
     else:
         return bfs( n, p)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
