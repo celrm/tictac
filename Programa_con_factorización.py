@@ -18,18 +18,17 @@ def op( u, v, o):
         return int(u/v)
 
 
-def factors(n, startFrom=2):
-    if n <= 1:  return [ ]
-    d = startFrom
-    factors = [ ]
-    while n >= d*d:
-      if n % d == 0:
-        factors.append(d)
-        n = n/d
-      else:
-        d += 1 + d % 2
-    factors.append(n)
-    return factors
+def factors(n):
+    result=[]
+    for i in chain([2],range(3,n+1,2)):
+        s=0
+        while n%i==0:
+            n/=i
+            s+=1
+            result.extend([i])
+            if n==1:
+                return result
+
 
 
 def bfs( n, p):  
