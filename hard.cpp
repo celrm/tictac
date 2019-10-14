@@ -1,5 +1,6 @@
 #include <iostream>
 #include <climits>
+#include <iomanip>
 #include <unordered_set>
 #include <unordered_map>
 #include <vector>
@@ -90,9 +91,9 @@ void bfs(ll n, mls &cadena,unordered_map<ll,int> &puntos,unordered_set<ll> &ss) 
 						cadena[w] = sol;
 						parentesis[w] = (o==SUM || o==RES || o==ARES);
 						puntos[w] = l;
-						if(w==n) return; // Se comprueba si hemos llegado al resultado.
 						pool[l].insert(w); // Los del nivel l.
 					}
+					if(w==n) return; // Se comprueba si hemos llegado al resultado.
 				}
 			}
 		}
@@ -101,25 +102,91 @@ void bfs(ll n, mls &cadena,unordered_map<ll,int> &puntos,unordered_set<ll> &ss) 
 	}
 }
 
-bool caso() {
-	ll n,p; // n es el numero destino, p el primo restringido.
-	cin >> n >> p;
+const vector<ops> opsvecS = {MUL,SUM,RES//,ARES
+	};
+void bfsS(ll n, mls &cadena,unordered_map<ll,int> &puntos,unordered_set<ll> &ss) {
+	unordered_map<int,unordered_set<ll>> pool;
+	unordered_map<ll,bool> parentesis;
 	
-	mls cadena;
-	unordered_map<ll,int> puntos;
+	int l = 1;
 	
-	unordered_set<ll> ss = s;
-	ss.erase(p); // Se elimina de s el primo restringido.
+	for (auto u : ss) { // Todos los primos permitidos tienen como cadena ellos mismos.
+		cadena[u] = to_string(u);
+		parentesis[u] = false;
+		puntos[u] = l;
+		if(u==n) return; // Se comprueba si hemos llegado al resultado.
+	}
+	pool[l] = ss; // Los del nivel 1.
 	
-	bfs(n,cadena,puntos,ss);
-	
-	cout << cadena[n];
-	
-	cout << '\n';
-	
-	return true;
+	for (l = 2; l < INT_MAX; ++l) { // Sabemos que siempre hay solucion asi que acaba.
+	for (int i = l-1; i >= l/2+l%2; --i) {
+		for(auto u : pool[i]) {
+		for(auto v : pool[l-i]) {
+			for (auto o : opsvecS) {
+				if(!(o==DIV && (v==0 || u%v!=0)) 
+				&& !(o==ADIV && (u==0 || v%u!=0))) { // Condiciones de la division.
+					ll w = op(u,v,o);
+					if(cadena.find(w) == cadena.end()) { // Si aun no se ha pasado por w
+						string cadu = cadena[u];
+						string cadv = cadena[v];
+						string sol;
+						if(o==DIV || o==ADIV) { // Parentesis.
+							if(puntos[u]>1) cadu = "(" + cadu + ")";
+							if(puntos[v]>1) cadv = "(" + cadv + ")";							
+						} if(o==MUL || o==RES || o==ARES) {
+							if(!(o==RES) && parentesis[u]) cadu = "(" + cadu + ")";
+							if(!(o==ARES) && parentesis[v]) cadv = "(" + cadv + ")";							
+						}
+						if (o==ADIV || o==ARES) // Caso no conmutativo.
+							sol = cadv + tochar(o) + cadu;
+						else
+							sol = cadu + tochar(o) + cadv;
+						cadena[w] = sol;
+						parentesis[w] = (o==SUM || o==RES || o==ARES);
+						puntos[w] = l;
+						pool[l].insert(w); // Los del nivel l.
+					}
+					if(w==n) return; // Se comprueba si hemos llegado al resultado.
+				}
+			}
+		}
+		}
+	}
+	}
 }
 
 int main() {
-	while(caso());
+	//ll n,p; // n es el numero destino, p el primo restringido.
+	//cin >> n >> p;
+	
+	unordered_set<ll> ss = s;
+	//ss.erase(p); // Se elimina de s el primo restringido.
+	ll start = 14000;
+	ll end = 15000;
+	for(ll i = start; i < end; ++i) {
+	
+		mls cadena;
+		unordered_map<ll,int> puntos;
+		
+		mls cadenaS;
+		unordered_map<ll,int> puntosS;
+		
+		bfs(i,cadena,puntos,ss);
+		
+		bfsS(i,cadenaS,puntosS,ss);
+		
+		if(puntos[i]==puntosS[i]) {
+			system("clear");
+			cout << showpoint << setprecision(3) 
+			<< double((i-start)*100/double(end-start)) << '%' << flush;
+		}
+		else {
+			cout <<'\n' << i << "=" << cadena[i] 
+			<< " y " <<    i << "=" << cadenaS[i] << '\n';
+			return 0;
+		}
+	}
+			system("clear");
+			cout << 100 << '%' << flush;
+	return 0;
 }

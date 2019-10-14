@@ -90,9 +90,9 @@ void bfs(ll n, mls &cadena,unordered_map<ll,int> &puntos,unordered_set<ll> &ss) 
 						cadena[w] = sol;
 						parentesis[w] = (o==SUM || o==RES || o==ARES);
 						puntos[w] = l;
-						if(w==n) return; // Se comprueba si hemos llegado al resultado.
 						pool[l].insert(w); // Los del nivel l.
 					}
+					if(w==n) return; // Se comprueba si hemos llegado al resultado.
 				}
 			}
 		}
@@ -116,10 +116,6 @@ bool caso() {
 	cout << cadena[n];
 	
 	cout << '\n';
-	
-	for(auto v : puntos) {
-		cout << v.first << " -> " << v.second << '\n';
-	}
 	
 	return true;
 }
