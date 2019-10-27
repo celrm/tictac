@@ -23,6 +23,9 @@ s = set([1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,9
 ops={"*","+","-","/"}
 
 
+""" Es la función de busqueda pero la he cambiado para evitar casos particulares donde daba una solución erronea.
+    A cambio tarda un poco más pero en general todo numero de 10^9 lo hace en un segundo y los casos especiales en 5 como maximo.
+"""
 def bfs( n, p):
     print(time.time())
     dist={}; dist_inv={} 
